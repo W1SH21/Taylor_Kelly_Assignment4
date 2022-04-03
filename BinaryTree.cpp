@@ -1,11 +1,22 @@
 #include "BinaryTree.h"
 #include <string>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
 template<class T>
-void BinaryTree::putItem(T*& tree, T &key) {
+BinaryTree<T>::BinaryTree() {
+    root = NULL;
+}
+
+template<class T>
+BinaryTree<T>::~BinaryTree() {
+
+}
+
+template<class T>
+void BinaryTree<T>::putItem(Node<T>*& tree, T &key) {
   
   if (root == NULL) {
     Node<T>* newNode = new Node<T>;
@@ -14,26 +25,31 @@ void BinaryTree::putItem(T*& tree, T &key) {
     tree->left = NULL;
     tree->key = key;
   } else if (key < tree->key) {
-    putItem(tree->right, itme);
+    putItem(tree->right, key);
   } else {
     putItem(tree->left, key);
   } //if
 } //putItem
 
 template<class T>
-void BinaryTree::insert(T &key) {
-  putItem(root, key);
+void BinaryTree<T>::insert(T &key) {
+    bool found = false;
+    Node<T>* tempNode = root;
+    getNode(tempNode, key, found);
+    if (found == false) {
+        putItem(root, key);
+    }
 } //insert
 
 template<class T>
-void BinaryTree::getPredecessor(T*& predNode) {
+void BinaryTree<T>::getPredecessor(Node<T>*& predNode) const {
   while (predNode->right != NULL) {
     predNode = predNode->right;
   } //while
 } //getPredecessor
 
 template<class T>
-void BinaryTree::deleteNode(Node*& tree) {
+void BinaryTree<T>::deleteNode(Node<T>*& tree) {
 
   Node<T>* tempNode = tree;
   if (tempNode->left == NULL) {
@@ -51,7 +67,7 @@ void BinaryTree::deleteNode(Node*& tree) {
 } //deleteNode
 
 template<class T>
-void BinaryTree::getNode(Node<T>*& tree, T &key, bool &found) {
+void BinaryTree<T>::getNode(Node<T>*& tree, T &key, bool &found) const {
   if (tree == NULL) {
     found = false;
   } else if (key < tree->key) {
@@ -65,19 +81,19 @@ void BinaryTree::getNode(Node<T>*& tree, T &key, bool &found) {
 } //findNode
 
 template<class T>
-void BinaryTree::deleteItem(T &key) {
+void BinaryTree<T>::deleteItem(T &key) {
 
   Node<T>* tempNode = root;
   bool exists = false;
   getNode(tempNode, key, exists);
-  if 
-  deleteNode(tempNode);
-  
+  if (exists == true) {
+      deleteNode(tempNode);
+  }
 } //deleteItem
 
 
 template<class T>
-void BinaryTree::retrieve(T &item, bool &found) const {
+void BinaryTree<T>::retrieve(T &item, bool &found) const {
 
   Node<T>* tempNode = root;
   getNode(tempNode, item, found);
@@ -85,59 +101,59 @@ void BinaryTree::retrieve(T &item, bool &found) const {
 } //retrieve
 
 template<class T>
-void BinaryTree::preOrderRecurse(Node<T>* tree) {
+void BinaryTree<T>::preOrderRecurse(Node<T>* tree) const {
   if (tree != NULL) {
     cout << tree->key;
-    preOrderRecurse(tree->left, ofs);
-    preOrderRecurse(tree->right, ofs);
+    preOrderRecurse(tree->left);
+    preOrderRecurse(tree->right);
   } //if
 } //preOrderRecurse
 
 template<class T>
-void BinaryTree::inOrderRecurse(Node<T>* tree) {
+void BinaryTree<T>::inOrderRecurse(Node<T>* tree) const {
   if (tree != NULL) {
-    inOrderRecurse(tree->left, ofs);
+    inOrderRecurse(tree->left);
     cout << tree->key;
-    inOrderRecurse(tree->right, ofs);
+    inOrderRecurse(tree->right);
   } //if
 } //inOrderRecurse
 
 template<class T>
-void BinaryTree::postOrderRecurse(Node<T>* tree) {
+void BinaryTree<T>::postOrderRecurse(Node<T>* tree) const {
   if (tree != NULL) {
-    postOrderRecurse(tree->left, ofs);
-    postOrderRecurse(tree->right, ofs);
+    postOrderRecurse(tree->left);
+    postOrderRecurse(tree->right);
     cout << tree->key;
   } //if
 } //postOrderRecurse
 
 
 template<class T>
-void BinaryTree::preOrder() const {
+void BinaryTree<T>::preOrder() const {
 
   Node<T>* tempNode = root;
-  preOrderRecurse(root, outFile);
+  preOrderRecurse(tempNode);
 
 } //preOrder
 
 template<class T>
-void BinaryTree::inOrder() const {
+void BinaryTree<T>::inOrder() const {
 
   Node<T>* tempNode = root;
-  inOrderRecurse(tempNode, outFile);
+  inOrderRecurse(tempNode);
 
 } //inOrder
 
 template<class T>
-void Binarytree::postOrder() const {
+void BinaryTree<T>::postOrder() const {
 
   Node<T>* tempNode = root;
-  postOrderRecurse(tempNode, outFile);
+  postOrderRecurse(tempNode);
   
 } //postOrder
 
 template<class T>
-int BinaryTree::countNodes(Node<T>* tree) {
+int BinaryTree<T>::countNodes(Node<T>* tree) const {
 
   if (tree == NULL) {
     return 0;
@@ -148,14 +164,14 @@ int BinaryTree::countNodes(Node<T>* tree) {
 } //countNodes
 
 template<class T>
-void BinaryTree::getLength() const {
+int BinaryTree<T>::getLength() const {
 
   return countNodes(root);
 
 } //getLength
 
 template<class T>
-int BinaryTree::singleParentCounter(Node<T>* tree) {
+int BinaryTree<T>::singleParentCounter(Node<T>* tree) const {
   if (tree == NULL) {
     return 0;
   } else if ((tree->left == NULL) ^ (tree->right == NULL)) {
@@ -166,7 +182,7 @@ int BinaryTree::singleParentCounter(Node<T>* tree) {
 } //singleParentCounter
 
 template<class T>
-int BinaryTree::getNumSingleParent() {
+int BinaryTree<T>::getNumSingleParent() const {
 
   return singleParentCounter(root);
 
@@ -174,7 +190,7 @@ int BinaryTree::getNumSingleParent() {
 
 
 template<class T>
-int BinaryTree::leafCounter(Node<T>* tree) {
+int BinaryTree<T>::leafCounter(Node<T>* tree) const {
 
   if (tree == NULL) {
     return 0;
@@ -187,10 +203,41 @@ int BinaryTree::leafCounter(Node<T>* tree) {
 } //leafCounter
 
 template<class T>
-int BinaryTree::getNumLeafNodes() {
+int BinaryTree<T>::getNumLeafNodes() const {
 
   return leafCounter(root);
   
 } //getNumLeafNodes
 
+template<class T>
+T BinaryTree<T>::recursiveSum(Node<T>* tree) const {
+    T output = tree->key;
+    if (tree->left != NULL) {
+        output += recursiveSum(tree->left);
+    }
+    if (tree->right != NULL) {
+        output += recursiveSum(tree->right);
+    }
+    return output;
+} //recursiveSum
 
+template<class T>
+T BinaryTree<T>::getSumOfSubtrees(T &key) const {
+    Node<T>* tempNode = root;
+    bool found = false;
+    getNode(tempNode, key, found);
+    T output = tempNode->key; // HELP
+    if (tempNode->left != NULL) {
+        output = recursiveSum(tempNode->left);
+        if (tempNode->right != NULL) {
+            output += recursiveSum(tempNode->right);
+        }
+    } else if (tempNode->right != NULL) {
+        output = recursiveSum(tempNode->right);
+    }
+    return output;
+} //getSumOfSubtrees
+
+template class BinaryTree<int>;
+template class BinaryTree<float>;
+template class BinaryTree<std::string>;
